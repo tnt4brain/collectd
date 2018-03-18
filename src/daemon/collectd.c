@@ -43,6 +43,10 @@
 #include <statgrab.h>
 #endif
 
+#if HAVE_KSTAT_H
+#include <kstat.h>
+#endif
+
 #ifndef COLLECTD_LOCALE
 #define COLLECTD_LOCALE "C"
 #endif
@@ -201,6 +205,7 @@ static int change_basedir(const char *orig_dir, _Bool create) {
 } /* static int change_basedir (char *dir) */
 
 #if HAVE_LIBKSTAT
+extern kstat_ctl_t *kc;
 static void update_kstat(void) {
   if (kc == NULL) {
     if ((kc = kstat_open()) == NULL)
@@ -367,7 +372,7 @@ static int notify_upstart(void) {
     return 0;
   }
 
-  NOTICE("Upstart detected, stopping now to signal readyness.");
+  NOTICE("Upstart detected, stopping now to signal readiness.");
   raise(SIGSTOP);
   unsetenv("UPSTART_JOB");
 
@@ -392,7 +397,7 @@ static int notify_systemd(void) {
           notifysocket);
     return 0;
   }
-  NOTICE("Systemd detected, trying to signal readyness.");
+  NOTICE("Systemd detected, trying to signal readiness.");
 
   unsetenv("NOTIFY_SOCKET");
 
